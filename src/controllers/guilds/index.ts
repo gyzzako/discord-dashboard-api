@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { getBotGuilds } from "../../services/guilds";
+import { getMutualGuilds } from "../../services/guilds";
 
 export async function getGuilds(req: Request, res: Response){
     try{
-        const { data } = await getBotGuilds();
-        res.send(data);
+        const guilds = await getMutualGuilds(req.user.id);
+        res.send({guilds});
     }catch(err){
         console.error(err);
         res.sendStatus(400);
