@@ -1,5 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
+import { isAuthenticated } from "../../middlewares/authentification";
 import { User } from "../../database/schemas/user";
 
 const router = Router();
@@ -9,13 +10,19 @@ router.get("/discord", passport.authenticate('discord'), (req, res) => {
 });
 
 router.get("/discord/redirect", passport.authenticate('discord'), (req, res) => {
-    res.redirect("http://localhost:3000");
+    res.redirect("http://localhost:3000/menu");
 });
 
-router.get("/status", (req, res) => {
+router.get("/logout", (req, res, next) => {
+    req.logout(function(err) {
+      if (err) { return next(err); }
+      res.redirect("http://localhost:3000");
+    });
+  });
+
+router.get("/is-authenticated", isAuthenticated, (req, res) => {
     if(req.user){
-        const user = req.user as Express.User & User;
-        res.send({discordId: user.discordId})
+        res.sendStatus(200);
      }else{
         res.sendStatus(401);
      } 
